@@ -8,7 +8,7 @@
     <title>Calculator</title>
   </head>
   <body>
-    <main calss="main">
+    <main class="main">
       <div class="calculator">
         <div class="screen">
           <div class="screen-last" id="lastOperationScreen"></div>
@@ -31,25 +31,25 @@
             DELETE
           </button>
 
-          <button class="btn" data-number onclick="this.blur();">7</button>
-          <button class="btn" data-number onclick="this.blur();">8</button>
-          <button class="btn" data-number onclick="this.blur();">9</button>
-          <button class="btn" data-operator onclick="this.blur();">÷</button>
+          <button class="btn" id="seven" data-number onclick="this.blur();">7</button>
+          <button class="btn" id="eight" data-number onclick="this.blur();">8</button>
+          <button class="btn" id="nine" data-number onclick="this.blur();">9</button>
+          <button class="btn" id="division" data-operator onclick="this.blur();">÷</button>
 
-          <button class="btn" data-number onclick="this.blur();">4</button>
-          <button class="btn" data-number onclick="this.blur();">5</button>
-          <button class="btn" data-number onclick="this.blur();">6</button>
-          <button class="btn" data-operator onclick="this.blur();">×</button>
+          <button class="btn" id="four" data-number onclick="this.blur();">4</button>
+          <button class="btn" id="five" data-number onclick="this.blur();">5</button>
+          <button class="btn" id="six" data-number onclick="this.blur();">6</button>
+          <button class="btn" id="multiplication" data-operator onclick="this.blur();">×</button>
 
-          <button class="btn" data-number onclick="this.blur();">1</button>
-          <button class="btn" data-number onclick="this.blur();">2</button>
-          <button class="btn" data-number onclick="this.blur();">3</button>
-          <button class="btn" data-operator onclick="this.blur();">−</button>
+          <button class="btn" id="one" data-number onclick="this.blur();">1</button>
+          <button class="btn" id="two" data-number onclick="this.blur();">2</button>
+          <button class="btn" id="three" data-number onclick="this.blur();">3</button>
+          <button class="btn" id="subtraction" data-operator onclick="this.blur();">−</button>
 
-          <button class="btn" onclick="this.blur();" id="pointBtn">0</button>
-          <button class="btn" data-number onclick="this.blur();">.</button>
-          <button class="btn" onclick="this.blur();" id="equalsBtn">=</button>
-          <button class="btn" data-operator onclick="this.blur();">+</button>
+          <button class="btn" id="zero" onclick="this.blur();" id="pointBtn">0</button>
+          <button class="btn" id="dot" data-number onclick="this.blur();">.</button>
+          <button class="btn" id="equal" onclick="this.blur();" id="equalsBtn">=</button>
+          <button class="btn" id="addition" data-operator onclick="this.blur();">+</button>
         </div>
       </div>
     </main>
