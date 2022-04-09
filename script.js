@@ -45,22 +45,20 @@ function divide(num1, num2) {
  * @param {Number} num2
  * @returns Return calculation of num1 operator num2 whereas operator could be + / - *
  */
-function operate(num1, operator, num2) {
+function operate(operator, num1, num2) {
+  num1 = Number(num1);
+  num2 = Number(num2);
   switch (operator) {
     case "+":
       return add(num1, num2);
-      break;
-    case "-":
+    case "−":
       return subtract(num1, num2);
-      break;
-    case "*":
+    case "×":
       return multiply(num1, num2);
-      break;
-    case "/":
+    case "÷":
       return divide(num1, num2);
-      break;
     default:
-      console.log("Wrong input for OPERATE function");
+      return null;
   }
 }
 
@@ -68,101 +66,171 @@ function operate(num1, operator, num2) {
  * Function to update the calculator screen value
  * @param {Number} value indicates the value of the button
  */
-function populateDisplay(value) {
-  if (displayValue == "0" && value == "0") {
-    displayValue = "0";
-  } else if (value == "." && displayValue.includes(".")) {
-    return
-  } else {
-    displayValue += value;
-  }
-  screenCurrent.textContent = Number(displayValue).toLocaleString("en-US");
+function appendNumber(number) {
+  if (currentOperationScreen.textContent === "0" || shouldResetScreen)
+    resetScreen();
+  currentOperationScreen.textContent += number;
 }
 
 /**
- * Function to clear and reset the calculator screen
+ * Function to clear the calculator screen
  */
 function clear() {
-  displayValue = "0";
-  screenCurrent.textContent = "0";
-  screenPrevious.textContent = "";
+  currentOperationScreen.textContent = "0";
+  lastOperationScreen.textContent = "";
+  firstOperand = "";
+  secondOperand = "";
+  currentOperation = null;
+}
+
+/**
+ * Function to reset the calculator screen
+ */
+function resetScreen() {
+  currentOperationScreen.textContent = "";
+  shouldResetScreen = false;
 }
 
 /**
  * Function to delete the last digit inserted to the calculator
  */
-function deleteNum() {
-  displayValue = displayValue.slice(0, -1);
-  screenCurrent.textContent = Number(displayValue).toLocaleString("en-US");
+function deleteNumber() {
+  currentOperationScreen.textContent = currentOperationScreen.textContent
+    .toString()
+    .slice(0, -1);
 }
 
+/**
+ * Function to set the intended math operation +, -, /, or * and evaluate the equation
+ * @param {String} operator
+ */
+function setOperation(operator) {
+  if (currentOperation !== null) evaluate();
+  firstOperand = currentOperationScreen.textContent;
+  currentOperation = operator;
+  lastOperationScreen.textContent = `${firstOperand} ${currentOperation}`;
+  shouldResetScreen = true;
+}
+
+/**
+ * Function to append a dot to the calculator screen input
+ */
+function appendDot() {
+  if (shouldResetScreen) resetScreen();
+  if (currentOperationScreen.textContent === "")
+    currentOperationScreen.textContent = "0";
+  if (currentOperationScreen.textContent.includes(".")) return;
+  currentOperationScreen.textContent += ".";
+}
+
+/**
+ * Function to handle when input inserted from keyboard instead clicking on the buttons
+ * @param {event object} e
+ */
 function handleKeyboardInput(e) {
-  if (e.key >= 0 && e.key <= 9) populateDisplay(e.key)
-  if (e.key === '.') populateDisplay(e.key)
-  //if (e.key === '=' || e.key === 'Enter') evaluate()
-  //if (e.key === 'Backspace') deleteNumber()
-  //if (e.key === 'Escape') clear()
-  //if (e.key === '+' || e.key === '-' || e.key === '*' || e.key === '/')
-  //  setOperation(convertOperator(e.key))
+  if (e.key >= 0 && e.key <= 9) appendNumber(e.key);
+  if (e.key === ".") appendDot();
+  if (e.key === "=" || e.key === "Enter") evaluate();
+  if (e.key === "Backspace") deleteNumber();
+  if (e.key === "Escape") clear();
+  if (e.key === "+" || e.key === "-" || e.key === "*" || e.key === "/")
+    setOperation(convertOperator(e.key));
+}
+
+/**
+ * Function to round the equation result
+ * @param {Number} number
+ * @returns rounded number
+ */
+function roundResult(number) {
+  return Math.round(number * 1000) / 1000;
+}
+
+/**
+ * Function to evaluate the equation and make the intended calculation
+ */
+function evaluate() {
+  if (currentOperation === null || shouldResetScreen) return;
+  if (currentOperation === "÷" && currentOperationScreen.textContent === "0") {
+    alert("You can't divide by 0!");
+    return;
+  }
+  secondOperand = currentOperationScreen.textContent;
+  currentOperationScreen.textContent = roundResult(
+    operate(currentOperation, firstOperand, secondOperand)
+  );
+  lastOperationScreen.textContent = `${firstOperand} ${currentOperation} ${secondOperand} =`;
+  currentOperation = null;
+}
+
+/**
+ * Function to convert the regular math operators into their corresponding unicode operators
+ * Like from * -> ×
+ * @param {String} keyboardOperator
+ * @returns Unicode representation of the operator
+ */
+function convertOperator(keyboardOperator) {
+  if (keyboardOperator === "/") return "÷";
+  if (keyboardOperator === "*") return "×";
+  if (keyboardOperator === "-") return "−";
+  if (keyboardOperator === "+") return "+";
 }
 
 // Calculator screen objects to represent the screen values
-const screenCurrent = document.querySelector("#currentOperationScreen");
-const screenPrevious = document.querySelector("#lastOperationScreen");
-let displayValue = "";
-let equation = "";
-let operand = "";
+const lastOperationScreen = document.getElementById("lastOperationScreen");
+const currentOperationScreen = document.getElementById("currentOperationScreen");
+let firstOperand = "";
+let secondOperand = "";
+let currentOperation = null;
+let shouldResetScreen = false;
 
-// first row
+// Buttons
 const zero = document.querySelector("#zero");
 const dot = document.querySelector("#dot");
 const equal = document.querySelector("#equal");
 const addition = document.querySelector("#addition");
-
-// second row
 const one = document.querySelector("#one");
 const two = document.querySelector("#two");
 const three = document.querySelector("#three");
 const subtraction = document.querySelector("#subtraction");
-
-// third row
 const four = document.querySelector("#four");
 const five = document.querySelector("#five");
 const six = document.querySelector("#six");
 const multiplication = document.querySelector("#multiplication");
-
-// fourth row
 const seven = document.querySelector("#seven");
 const eight = document.querySelector("#eight");
 const nine = document.querySelector("#nine");
 const division = document.querySelector("#division");
-
-// buttons bar
 const delBtn = document.querySelector("#deleteBtn");
 const clearBtn = document.querySelector("#clearBtn");
 
-// delete previous number that inserted
-delBtn.addEventListener("click", deleteNum);
-
-// clear the screen
+// Clear the screen and delete previous number that inserted
 clearBtn.addEventListener("click", clear);
+delBtn.addEventListener("click", deleteNumber);
 
 // Numbers event listeners
-zero.addEventListener("click", () => populateDisplay("0"));
-one.addEventListener("click", () => populateDisplay("1"));
-two.addEventListener("click", () => populateDisplay("2"));
-three.addEventListener("click", () => populateDisplay("3"));
-four.addEventListener("click", () => populateDisplay("4"));
-five.addEventListener("click", () => populateDisplay("5"));
-six.addEventListener("click", () => populateDisplay("6"));
-seven.addEventListener("click", () => populateDisplay("7"));
-eight.addEventListener("click", () => populateDisplay("8"));
-nine.addEventListener("click", () => populateDisplay("9"));
+zero.addEventListener("click", () => appendNumber(zero.textContent));
+one.addEventListener("click", () => appendNumber(one.textContent));
+two.addEventListener("click", () => appendNumber(two.textContent));
+three.addEventListener("click", () => appendNumber(three.textContent));
+four.addEventListener("click", () => appendNumber(four.textContent));
+five.addEventListener("click", () => appendNumber(five.textContent));
+six.addEventListener("click", () => appendNumber(six.textContent));
+seven.addEventListener("click", () => appendNumber(seven.textContent));
+eight.addEventListener("click", () => appendNumber(eight.textContent));
+nine.addEventListener("click", () => appendNumber(nine.textContent));
 
 // Operators event listeners
-dot.addEventListener("click", () => populateDisplay("."))
-//equal.addEventListener("click")
+addition.addEventListener("click", () => setOperation(addition.textContent));
+subtraction.addEventListener("click", () =>
+  setOperation(subtraction.textContent)
+);
+multiplication.addEventListener("click", () =>
+  setOperation(multiplication.textContent)
+);
+division.addEventListener("click", () => setOperation(division.textContent));
+equal.addEventListener("click", evaluate);
+dot.addEventListener("click", appendDot);
+
 // Keyboard events listener
-window.addEventListener("keydown", handleKeyboardInput)
-
-
+window.addEventListener("keydown", handleKeyboardInput);
